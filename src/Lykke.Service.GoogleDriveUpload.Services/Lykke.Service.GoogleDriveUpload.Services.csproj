@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Lykke.Service.GoogleDriveUpload.Services</AssemblyName>
+    <RootNamespace>Lykke.Service.GoogleDriveUpload.Services</RootNamespace>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="2.16.3" />
+    <PackageReference Include="Flurl.Http" Version="1.2.0" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.29.0.967" />
+    <PackageReference Include="Lykke.Common" Version="1.1.94" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Service.GoogleDriveUpload.Core\Lykke.Service.GoogleDriveUpload.Core.csproj" />
+  </ItemGroup>
+
+</Project>
