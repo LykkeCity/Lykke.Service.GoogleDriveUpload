@@ -5,6 +5,7 @@ using Lykke.Service.GoogleDriveUpload.Core.Services;
 using Lykke.Service.GoogleDriveUpload.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.SwaggerGen.Annotations;
+using Lykke.Service.GoogleDriveUpload.Models.Responses;
 
 namespace Lykke.Service.GoogleDriveUpload.Controllers
 {

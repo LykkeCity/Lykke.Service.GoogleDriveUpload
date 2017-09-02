@@ -1,7 +1,8 @@
-﻿namespace Lykke.Service.GoogleDriveUpload.Client
+﻿
+
+namespace Lykke.Service.GoogleDriveUpload.Client
 {
     public static class AutorestClientMapper
     {
-        
     }
 }

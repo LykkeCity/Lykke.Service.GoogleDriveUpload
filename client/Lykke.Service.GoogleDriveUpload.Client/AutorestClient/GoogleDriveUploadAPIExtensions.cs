@@ -16,6 +16,54 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
     /// </summary>
     public static partial class GoogleDriveUploadAPIExtensions
     {
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            public static GetAllFolderPathsResponse AllFolderPaths(this IGoogleDriveUploadAPI operations)
+            {
+                return operations.AllFolderPathsAsync().GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<GetAllFolderPathsResponse> AllFolderPathsAsync(this IGoogleDriveUploadAPI operations, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.AllFolderPathsWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='model'>
+            /// </param>
+            public static UploadFileResponse UploadFile(this IGoogleDriveUploadAPI operations, UploadFileModel model = default(UploadFileModel))
+            {
+                return operations.UploadFileAsync(model).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='model'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<UploadFileResponse> UploadFileAsync(this IGoogleDriveUploadAPI operations, UploadFileModel model = default(UploadFileModel), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.UploadFileWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
             /// <summary>
             /// Checks service is alive
             /// </summary>

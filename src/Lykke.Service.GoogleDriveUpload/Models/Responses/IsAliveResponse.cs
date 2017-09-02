@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lykke.Service.GoogleDriveUpload.Models
+namespace Lykke.Service.GoogleDriveUpload.Models.Responses
 {
     public class IsAliveResponse
     {

@@ -7,6 +7,7 @@ using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Upload;
 using Lykke.Service.GoogleDriveUpload.Core;
+using Lykke.Service.GoogleDriveUpload.Core.Domain.GoogleDrive;
 using Lykke.Service.GoogleDriveUpload.Core.Services;
 using Newtonsoft.Json;
 using System;
@@ -51,18 +52,9 @@ namespace Lykke.Service.GoogleDriveUpload.Services
                 HttpClientInitializer = credential,
                 ApplicationName = "Lykke GoogleDrive Upload",
             });
-
-
-            var files = GetFilesListAsync().Result;
-            var folders = files
-                .Where(f => f.MimeType == FolderMimeType)
-                .Select(f => (Name: f.Name, Id: f.Id, Parents: f.Parents))
-                .ToList();
-
-            var tmp = GetFolderPaths();
         }
 
-        public List<(string Id, string Path)> GetFolderPaths()
+        public List<FolderPath> GetFolderPaths()
         {
             var files = GetFilesListAsync().Result;
             var folders = files
@@ -80,12 +72,12 @@ namespace Lykke.Service.GoogleDriveUpload.Services
                 return null;
             });
 
-            var result = new List<(string Id, string Path)>();
+            var result = new List<FolderPath>();
             foreach (var folderPair in folders)
             {
                 var path = AbsPath(folderPair.Value, getParent);
                 if (!string.IsNullOrEmpty(path))
-                    result.Add((folderPair.Key, path));
+                    result.Add(new FolderPath() { GoogleId = folderPair.Key, Name = folderPair.Value.Name, Path = path });
             }
 
             return result;
@@ -120,26 +112,7 @@ namespace Lykke.Service.GoogleDriveUpload.Services
             path.Add(name);
             return path.Aggregate((current, next) => Path.Combine(current, next));
         }
-
-        //private static File GetParent(string id)
-        //{
-        //    // Check cache
-        //    if (files.ContainsKey(id))
-        //    {
-        //        return files[id];
-        //    }
-
-        //    // Fetch file from drive
-        //    var request = service.Files.Get(id);
-        //    request.Fields = "name,parents";
-        //    var parent = request.Execute();
-
-        //    // Save in cache
-        //    files[id] = parent;
-
-        //    return parent;
-        //}
-
+        
         private async Task<IList<File>> GetFilesListAsync()
         {
             // Define parameters of request.
@@ -150,7 +123,7 @@ namespace Lykke.Service.GoogleDriveUpload.Services
             return (await listRequest.ExecuteAsync()).Files;
         }
 
-        private async Task<IUploadProgress> UploadFileAsync(string fileName, byte[] fileData, string ParentFolderId)
+        public async Task<string> UploadFileAsync(string fileName, byte[] fileData, string ParentFolderId)
         {
             var uploadStream = new MemoryStream(fileData);
             using (uploadStream)
@@ -176,7 +149,7 @@ namespace Lykke.Service.GoogleDriveUpload.Services
                     //await InsertPermission(service, request.ResponseBody.Id, "oleksandr.lysenko@lykke.com", "user", "writer");
                 }
 
-                return uploadProgress;
+                return request.ResponseBody?.Id;
             }
         }
 

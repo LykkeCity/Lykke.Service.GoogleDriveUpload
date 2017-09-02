@@ -26,10 +26,11 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the IsAliveResponse class.
         /// </summary>
-        public IsAliveResponse(string version = default(string), string env = default(string), IList<IssueIndicator> issueIndicators = default(IList<IssueIndicator>))
+        public IsAliveResponse(string version = default(string), string env = default(string), bool? isDebug = default(bool?), IList<IssueIndicator> issueIndicators = default(IList<IssueIndicator>))
         {
             Version = version;
             Env = env;
+            IsDebug = isDebug;
             IssueIndicators = issueIndicators;
             CustomInit();
         }
@@ -48,6 +49,11 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "Env")]
         public string Env { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "IsDebug")]
+        public bool? IsDebug { get; set; }
 
         /// <summary>
         /// </summary>
