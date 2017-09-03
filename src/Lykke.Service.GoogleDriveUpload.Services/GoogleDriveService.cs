@@ -56,7 +56,7 @@ namespace Lykke.Service.GoogleDriveUpload.Services
 
         public List<FolderPath> GetFolderPaths()
         {
-            var files = GetFilesListAsync().Result;
+            var files = GetFilesListAsync(true).Result;
             var folders = files
                 .Where(f => f.MimeType == FolderMimeType)
                 .ToDictionary(key => key.Id, val => val);
@@ -113,14 +113,35 @@ namespace Lykke.Service.GoogleDriveUpload.Services
             return path.Aggregate((current, next) => Path.Combine(current, next));
         }
         
-        private async Task<IList<File>> GetFilesListAsync()
+        private async Task<IList<File>> GetFilesListAsync(bool isFoldersOnly)
         {
             // Define parameters of request.
             FilesResource.ListRequest listRequest = service.Files.List();
-            listRequest.PageSize = 100;
+            listRequest.PageSize = 1000;
             listRequest.Fields = "nextPageToken, files(id, name, mimeType, parents, properties)";
 
-            return (await listRequest.ExecuteAsync()).Files;
+            if (isFoldersOnly)
+            {
+                listRequest.Q = $"mimeType = '{FolderMimeType}'";
+            }
+
+            var result = new List<File>();
+
+            while (true)
+            {
+                var fileListResponse = await listRequest.ExecuteAsync();
+                if (fileListResponse == null)
+                    break;
+
+                result.AddRange(fileListResponse.Files);
+
+                if (fileListResponse.NextPageToken == null)
+                    break;
+
+                listRequest.PageToken = fileListResponse.NextPageToken;
+            }
+
+            return result;
         }
 
         public async Task<string> UploadFileAsync(string fileName, byte[] fileData, string ParentFolderId)
@@ -181,9 +202,42 @@ namespace Lykke.Service.GoogleDriveUpload.Services
             {
                 var context = (new { fileId, account, type, role }).ToJson();
                 await _log.WriteErrorAsync("GoogleDriveService", "InsertPermissionAsync", context, ex);
+
+                return null;
+            }
+        }
+
+        public async Task<List<FilePermission>> GetPermissions(string fileId)
+        {
+            var permissionsListRequest = service.Permissions.List(fileId);
+            permissionsListRequest.PageSize = 100;
+            permissionsListRequest.Fields = "nextPageToken, permissions(id, domain, emailAddress, expirationTime, role, type)";
+
+            var result = new List<FilePermission>();
+
+            while (true)
+            {
+                var permissionListResponse = await permissionsListRequest.ExecuteAsync();
+                if (permissionListResponse == null)
+                    break;
+
+                result.AddRange(permissionListResponse.Permissions.Select(p => new FilePermission()
+                {
+                    GoogleId = p.Id,
+                    Domain = p.Domain,
+                    EmailAddress = p.EmailAddress,
+                    ExpirationTime = p.ExpirationTime,
+                    Role = Enum.Parse<Role>(p.Role, true),
+                    Type = p.Type
+                }));
+
+                if (permissionListResponse.NextPageToken == null)
+                    break;
+
+                permissionsListRequest.PageToken = permissionListResponse.NextPageToken;
             }
 
-            return null;
+            return result;
         }
     }
 }

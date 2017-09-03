@@ -66,6 +66,32 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
                 }
             }
 
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='model'>
+            /// </param>
+            public static IList<FilePermission> Permissions(this IGoogleDriveUploadAPI operations, GetPermissionsModel model = default(GetPermissionsModel))
+            {
+                return operations.PermissionsAsync(model).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='model'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<IList<FilePermission>> PermissionsAsync(this IGoogleDriveUploadAPI operations, GetPermissionsModel model = default(GetPermissionsModel), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.PermissionsWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
             /// <summary>
             /// Checks service is alive
             /// </summary>

@@ -71,5 +71,33 @@ namespace Lykke.Service.GoogleDriveUpload.Controllers
                 return StatusCode(500, ErrorResponse.Create(ex.Message));
             }
         }
+
+
+        [HttpPost("Permissions")]
+        [SwaggerOperation("Permissions")]
+        [ProducesResponseType(typeof(List<FilePermission>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetPermissions([FromBody] GetPermissionsModel model)
+        {
+            #region Validation
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ErrorResponse.Create(ModelState));
+            }
+
+            #endregion
+
+            try
+            {
+                var permissions = await _service.GetPermissions(model.FileId);
+
+                return Ok(permissions);
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync("GoogleDriveController", nameof(UploadFile), string.Empty, ex);
+                return StatusCode(500, ErrorResponse.Create(ex.Message));
+            }
+        }
     }
 }
