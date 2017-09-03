@@ -8,6 +8,8 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
     using Lykke.Service.GoogleDriveUpload;
     using Lykke.Service.GoogleDriveUpload.Client;
     using Models;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -19,7 +21,7 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            public static GetAllFolderPathsResponse AllFolderPaths(this IGoogleDriveUploadAPI operations)
+            public static IList<FolderPath> AllFolderPaths(this IGoogleDriveUploadAPI operations)
             {
                 return operations.AllFolderPathsAsync().GetAwaiter().GetResult();
             }
@@ -30,7 +32,7 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<GetAllFolderPathsResponse> AllFolderPathsAsync(this IGoogleDriveUploadAPI operations, CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<IList<FolderPath>> AllFolderPathsAsync(this IGoogleDriveUploadAPI operations, CancellationToken cancellationToken = default(CancellationToken))
             {
                 using (var _result = await operations.AllFolderPathsWithHttpMessagesAsync(null, cancellationToken).ConfigureAwait(false))
                 {

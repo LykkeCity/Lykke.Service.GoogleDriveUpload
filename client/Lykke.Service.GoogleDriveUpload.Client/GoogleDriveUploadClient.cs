@@ -22,9 +22,8 @@ namespace Lykke.Service.GoogleDriveUpload.Client
         public async Task<IList<FolderPath>> GetFolderPaths()
         {
             var paths = await _service.AllFolderPathsAsync();
-            var result = paths.Paths;
 
-            return paths.Paths;
+            return paths;
         }
 
         public async Task<string> UploadFileAsync(string fileName, byte[] fileData, string parentFolderId)

@@ -157,7 +157,7 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<HttpOperationResponse<GetAllFolderPathsResponse>> AllFolderPathsWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<IList<FolderPath>>> AllFolderPathsWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;
@@ -231,7 +231,7 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
                 throw ex;
             }
             // Create Result
-            var _result = new HttpOperationResponse<GetAllFolderPathsResponse>();
+            var _result = new HttpOperationResponse<IList<FolderPath>>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
             // Deserialize Response
@@ -240,7 +240,7 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
                 _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 try
                 {
-                    _result.Body = SafeJsonConvert.DeserializeObject<GetAllFolderPathsResponse>(_responseContent, DeserializationSettings);
+                    _result.Body = SafeJsonConvert.DeserializeObject<IList<FolderPath>>(_responseContent, DeserializationSettings);
                 }
                 catch (JsonException ex)
                 {

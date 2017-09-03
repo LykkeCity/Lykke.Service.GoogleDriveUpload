@@ -24,9 +24,10 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the FolderPath class.
         /// </summary>
-        public FolderPath(string googleId = default(string), string path = default(string))
+        public FolderPath(string googleId = default(string), string name = default(string), string path = default(string))
         {
             GoogleId = googleId;
+            Name = name;
             Path = path;
             CustomInit();
         }
@@ -40,6 +41,11 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "GoogleId")]
         public string GoogleId { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "Name")]
+        public string Name { get; set; }
 
         /// <summary>
         /// </summary>
