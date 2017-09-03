@@ -7,7 +7,7 @@ namespace Lykke.Service.GoogleDriveUpload.Client
 {
     public interface IGoogleDriveUploadClient
     {
-        Task<IList<FolderPath>> GetFolderPaths();
+        Task<IList<FolderPath>> GetFolderPathsAsync();
         Task<string> UploadFileAsync(string fileName, byte[] fileData, string ParentFolderId);
     }
 }
