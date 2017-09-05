@@ -143,7 +143,7 @@ namespace Lykke.Service.GoogleDriveUpload.Services
 
             return result;
         }
-
+        
         public async Task<string> UploadFileAsync(string fileName, byte[] fileData, string ParentFolderId)
         {
             var uploadStream = new MemoryStream(fileData);
@@ -207,7 +207,12 @@ namespace Lykke.Service.GoogleDriveUpload.Services
             }
         }
 
-        public async Task<List<FilePermission>> GetPermissions(string fileId)
+        /// <summary>
+        /// Get permissions for file (folder)
+        /// </summary>
+        /// <param name="fileId">ID of file (folder) obtained from Google API</param>
+        /// <returns>Set of permissions</returns>
+        public async Task<List<FilePermission>> GetPermissionsAsync(string fileId)
         {
             var permissionsListRequest = service.Permissions.List(fileId);
             permissionsListRequest.PageSize = 100;

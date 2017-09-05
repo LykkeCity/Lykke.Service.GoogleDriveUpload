@@ -89,7 +89,7 @@ namespace Lykke.Service.GoogleDriveUpload.Controllers
 
             try
             {
-                var permissions = await _service.GetPermissions(model.FileId);
+                var permissions = await _service.GetPermissionsAsync(model.FileId);
 
                 return Ok(permissions);
             }

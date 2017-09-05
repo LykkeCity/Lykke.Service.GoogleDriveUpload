@@ -9,6 +9,6 @@ namespace Lykke.Service.GoogleDriveUpload.Client
     {
         Task<IList<FolderPath>> GetFolderPathsAsync();
         Task<string> UploadFileAsync(string fileName, byte[] fileData, string ParentFolderId);
-        Task<IList<FilePermission>> GetPermissions(string fileId);
+        Task<IList<FilePermission>> GetPermissionsAsync(string fileId);
     }
 }

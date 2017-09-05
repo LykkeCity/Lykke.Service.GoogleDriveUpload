@@ -48,7 +48,7 @@ namespace Lykke.Service.GoogleDriveUpload.Client
         /// </summary>
         /// <param name="fileId">ID of file (folder) obtained from Google Drive API</param>
         /// <returns>List of permissions</returns>
-        public async Task<IList<FilePermission>> GetPermissions(string fileId)
+        public async Task<IList<FilePermission>> GetPermissionsAsync(string fileId)
         {
             var permissions = await _service.PermissionsAsync(new GetPermissionsModel() { FileId = fileId });
             return permissions;
