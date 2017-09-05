@@ -221,7 +221,8 @@ namespace Lykke.Service.GoogleDriveUpload.Services
                 if (permissionListResponse == null)
                     break;
 
-                result.AddRange(permissionListResponse.Permissions.Select(p => new FilePermission()
+                var serviceEmailAddress = _settings.GoogleDriveApiKey.client_email.Trim().ToLower();
+                result.AddRange(permissionListResponse.Permissions.Where(p => p.EmailAddress.Trim().ToLower() != serviceEmailAddress).Select(p => new FilePermission()
                 {
                     GoogleId = p.Id,
                     Domain = p.Domain,
