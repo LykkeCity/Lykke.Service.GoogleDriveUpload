@@ -69,11 +69,37 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
+            /// <param name='fileId'>
+            /// </param>
+            public static IList<FilePermission> GetPermissions(this IGoogleDriveUploadAPI operations, string fileId = default(string))
+            {
+                return operations.GetPermissionsAsync(fileId).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='fileId'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<IList<FilePermission>> GetPermissionsAsync(this IGoogleDriveUploadAPI operations, string fileId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.GetPermissionsWithHttpMessagesAsync(fileId, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
             /// <param name='model'>
             /// </param>
-            public static IList<FilePermission> Permissions(this IGoogleDriveUploadAPI operations, GetPermissionsModel model = default(GetPermissionsModel))
+            public static FilePermission AddOrUpdatePermission(this IGoogleDriveUploadAPI operations, ChangePermissionModel model = default(ChangePermissionModel))
             {
-                return operations.PermissionsAsync(model).GetAwaiter().GetResult();
+                return operations.AddOrUpdatePermissionAsync(model).GetAwaiter().GetResult();
             }
 
             /// <param name='operations'>
@@ -84,9 +110,35 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<IList<FilePermission>> PermissionsAsync(this IGoogleDriveUploadAPI operations, GetPermissionsModel model = default(GetPermissionsModel), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<FilePermission> AddOrUpdatePermissionAsync(this IGoogleDriveUploadAPI operations, ChangePermissionModel model = default(ChangePermissionModel), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.PermissionsWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.AddOrUpdatePermissionWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
+                {
+                    return _result.Body;
+                }
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='model'>
+            /// </param>
+            public static bool? RemovePermission(this IGoogleDriveUploadAPI operations, ChangePermissionModel model = default(ChangePermissionModel))
+            {
+                return operations.RemovePermissionAsync(model).GetAwaiter().GetResult();
+            }
+
+            /// <param name='operations'>
+            /// The operations group for this extension method.
+            /// </param>
+            /// <param name='model'>
+            /// </param>
+            /// <param name='cancellationToken'>
+            /// The cancellation token.
+            /// </param>
+            public static async Task<bool?> RemovePermissionAsync(this IGoogleDriveUploadAPI operations, ChangePermissionModel model = default(ChangePermissionModel), CancellationToken cancellationToken = default(CancellationToken))
+            {
+                using (var _result = await operations.RemovePermissionWithHttpMessagesAsync(model, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }

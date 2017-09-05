@@ -50,7 +50,7 @@ namespace Lykke.Service.GoogleDriveUpload.Client
         /// <returns>List of permissions</returns>
         public async Task<IList<FilePermission>> GetPermissionsAsync(string fileId)
         {
-            var permissions = await _service.PermissionsAsync(new GetPermissionsModel() { FileId = fileId });
+            var permissions = await _service.GetPermissionsAsync(fileId);
             return permissions;
         }
 

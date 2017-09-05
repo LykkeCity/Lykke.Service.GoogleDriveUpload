@@ -53,6 +53,16 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
         /// </param>
         Task<HttpOperationResponse<UploadFileResponse>> UploadFileWithHttpMessagesAsync(UploadFileModel model = default(UploadFileModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <param name='fileId'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<IList<FilePermission>>> GetPermissionsWithHttpMessagesAsync(string fileId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='model'>
         /// </param>
         /// <param name='customHeaders'>
@@ -61,7 +71,17 @@ namespace Lykke.Service.GoogleDriveUpload.Client.AutorestClient
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<HttpOperationResponse<IList<FilePermission>>> PermissionsWithHttpMessagesAsync(GetPermissionsModel model = default(GetPermissionsModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<FilePermission>> AddOrUpdatePermissionWithHttpMessagesAsync(ChangePermissionModel model = default(ChangePermissionModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <param name='model'>
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<bool?>> RemovePermissionWithHttpMessagesAsync(ChangePermissionModel model = default(ChangePermissionModel), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Checks service is alive

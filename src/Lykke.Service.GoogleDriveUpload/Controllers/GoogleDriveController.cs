@@ -73,10 +73,10 @@ namespace Lykke.Service.GoogleDriveUpload.Controllers
         }
 
 
-        [HttpPost("Permissions")]
-        [SwaggerOperation("Permissions")]
+        [HttpGet("Permissions")]
+        [SwaggerOperation("GetPermissions")]
         [ProducesResponseType(typeof(List<FilePermission>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetPermissions([FromBody] GetPermissionsModel model)
+        public async Task<IActionResult> GetPermissions([FromQuery] GetPermissionsModel model)
         {
             #region Validation
 
@@ -92,6 +92,65 @@ namespace Lykke.Service.GoogleDriveUpload.Controllers
                 var permissions = await _service.GetPermissionsAsync(model.FileId);
 
                 return Ok(permissions);
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync("GoogleDriveController", nameof(UploadFile), string.Empty, ex);
+                return StatusCode(500, ErrorResponse.Create(ex.Message));
+            }
+        }
+
+        [HttpPost("Permissions")]
+        [SwaggerOperation("AddOrUpdatePermission")]
+        [ProducesResponseType(typeof(FilePermission), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> AddOrUpdatePermission([FromBody] ChangePermissionModel model)
+        {
+            #region Validation
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ErrorResponse.Create(ModelState));
+            }
+
+            if (model.Role == Role.Unknown)
+            {
+                return BadRequest(ErrorResponse.Create("Role is not defined"));
+            }
+
+            #endregion
+
+            try
+            {
+                var permissions = await _service.AddOrUpdatePermissionAsync(model.FileId, model.EmailAddress, model.Role);
+
+                return Ok(permissions);
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync("GoogleDriveController", nameof(UploadFile), string.Empty, ex);
+                return StatusCode(500, ErrorResponse.Create(ex.Message));
+            }
+        }
+
+        [HttpDelete("Permissions")]
+        [SwaggerOperation("RemovePermission")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> RemovePermission([FromBody] ChangePermissionModel model)
+        {
+            #region Validation
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ErrorResponse.Create(ModelState));
+            }
+
+            #endregion
+
+            try
+            {
+                var isRemoved = await _service.RemovePermissionAsync(model.FileId, model.EmailAddress);
+
+                return Ok(isRemoved);
             }
             catch (Exception ex)
             {

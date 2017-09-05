@@ -175,35 +175,77 @@ namespace Lykke.Service.GoogleDriveUpload.Services
         }
 
         /// <summary>
-        /// Insert a new permission.
+        /// Add new permission or update existed one.
         /// </summary>
-        /// <param name="service">Drive API service instance.</param>
         /// <param name="fileId">ID of the file to insert permission for.</param>
         /// <param name="account">
         /// User or group e-mail address, domain name or null for "default" type.
         /// </param>
-        /// <param name="type">The value "user", "group", "domain" or "default".</param>
         /// <param name="role">The value "owner", "writer" or "reader".</param>
         /// <returns>The inserted permission, null is returned if an API error occurred</returns>
-        private async Task<Permission> InsertPermissionAsync(string fileId, string account, string type = "user", string role = "writer")
+        public async Task<FilePermission> AddOrUpdatePermissionAsync(string fileId, string account, Role role = Role.Reader)
         {
+            if (fileId == null || role == Role.Unknown)
+                return null;
+
             Permission newPermission = new Permission
             {
                 EmailAddress = account,
-                Type = type,
-                Role = role
+                Type = "user",
+                Role = role.ToString().ToLower()
             };
 
             try
             {
-                return await service.Permissions.Create(newPermission, fileId).ExecuteAsync();
+                var permission = await service.Permissions.Create(newPermission, fileId).ExecuteAsync();
+                return new FilePermission() {
+                    EmailAddress = permission.EmailAddress,
+                    Domain = permission.Domain,
+                    Type = permission.Type,
+                    GoogleId = permission.Id,
+                    ExpirationTime = permission.ExpirationTime,
+                    Role = role
+                };
             }
             catch (Exception ex)
             {
-                var context = (new { fileId, account, type, role }).ToJson();
-                await _log.WriteErrorAsync("GoogleDriveService", "InsertPermissionAsync", context, ex);
+                var context = (new { fileId, account, role }).ToJson();
+                await _log.WriteErrorAsync("GoogleDriveService", nameof(AddOrUpdatePermissionAsync), context, ex);
 
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Remove permission.
+        /// </summary>
+        /// <param name="fileId">ID of the file to remove permission for.</param>
+        /// <param name="account">
+        /// User or group e-mail address, domain name or null for "default" type.
+        /// </param>
+        /// <returns><c>True</c> if removed. Otherwise <c>False</c></returns>
+        public async Task<bool> RemovePermissionAsync(string fileId, string account)
+        {
+            try
+            {
+                var allPermissions = await GetAllPermissionsAsync(fileId);
+
+                account = account.Trim().ToLower();
+                var permissionsToRemove = allPermissions.Where(p => p.EmailAddress.Trim().ToLower() == account);
+
+                foreach (var permission in permissionsToRemove)
+                {
+                    var resp = await service.Permissions.Delete(fileId, permission.Id).ExecuteAsync();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var context = (new { fileId, account }).ToJson();
+                await _log.WriteErrorAsync("GoogleDriveService", nameof(RemovePermissionAsync), context, ex);
+
+                return false;
             }
         }
 
@@ -214,11 +256,33 @@ namespace Lykke.Service.GoogleDriveUpload.Services
         /// <returns>Set of permissions</returns>
         public async Task<List<FilePermission>> GetPermissionsAsync(string fileId)
         {
+            var allPermissions = await GetAllPermissionsAsync(fileId);
+            var result = new List<FilePermission>();
+
+            if (!allPermissions.Any())
+                return result;
+
+            var serviceEmailAddress = _settings.GoogleDriveApiKey.client_email.Trim().ToLower();
+            result.AddRange(allPermissions.Where(p => p.EmailAddress.Trim().ToLower() != serviceEmailAddress).Select(p => new FilePermission()
+            {
+                GoogleId = p.Id,
+                Domain = p.Domain,
+                EmailAddress = p.EmailAddress,
+                ExpirationTime = p.ExpirationTime,
+                Role = Enum.Parse<Role>(p.Role, true),
+                Type = p.Type
+            }));
+            
+            return result;
+        }
+        
+        private async Task<List<Permission>> GetAllPermissionsAsync(string fileId)
+        {
             var permissionsListRequest = service.Permissions.List(fileId);
             permissionsListRequest.PageSize = 100;
             permissionsListRequest.Fields = "nextPageToken, permissions(id, domain, emailAddress, expirationTime, role, type)";
-
-            var result = new List<FilePermission>();
+            
+            var result = new List<Permission>();
 
             while (true)
             {
@@ -227,15 +291,7 @@ namespace Lykke.Service.GoogleDriveUpload.Services
                     break;
 
                 var serviceEmailAddress = _settings.GoogleDriveApiKey.client_email.Trim().ToLower();
-                result.AddRange(permissionListResponse.Permissions.Where(p => p.EmailAddress.Trim().ToLower() != serviceEmailAddress).Select(p => new FilePermission()
-                {
-                    GoogleId = p.Id,
-                    Domain = p.Domain,
-                    EmailAddress = p.EmailAddress,
-                    ExpirationTime = p.ExpirationTime,
-                    Role = Enum.Parse<Role>(p.Role, true),
-                    Type = p.Type
-                }));
+                result.AddRange(permissionListResponse.Permissions);
 
                 if (permissionListResponse.NextPageToken == null)
                     break;

@@ -8,6 +8,7 @@ namespace Lykke.Service.GoogleDriveUpload.Models.Responses
         public string Env { get; set; }
         public bool IsDebug { get; set; }
         public IEnumerable<IssueIndicator> IssueIndicators { get; set; }
+        public string Name => "Lykke.Service.GoogleDriveUpload";
 
         public class IssueIndicator
         {
