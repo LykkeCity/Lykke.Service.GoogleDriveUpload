@@ -54,6 +54,31 @@ namespace Lykke.Service.GoogleDriveUpload.Client
             return permissions;
         }
 
+        /// <summary>
+        /// Add new permission or update existing one
+        /// </summary>
+        /// <param name="fileId">ID of the file to insert/change permission for.</param>
+        /// <param name="emailAddress">Account's e-mail address</param>
+        /// <returns>Permission</returns>
+        public async Task<FilePermission> AddOrUpdatePermissionAsync(string fileId, string emailAddress)
+        {
+            var permission = await _service.AddOrUpdatePermissionAsync(new ChangePermissionModel() { FileId = fileId, EmailAddress = emailAddress, Role = Role.Reader });
+
+            return permission;
+        }
+
+        /// <summary>
+        /// Remove permission.
+        /// </summary>
+        /// <param name="fileId">ID of the file to remove permission for.</param>
+        /// <param name="emailAddress">Account's e-mail address</param>
+        /// <returns><c>True</c> if removed. Otherwise <c>False</c></returns>
+        public async Task<bool> RemovePermissionAsync(string fileId, string emailAddress)
+        {
+            var isRemoved = await _service.RemovePermissionAsync(new ChangePermissionModel() { FileId = fileId, EmailAddress = emailAddress });
+
+            return isRemoved ?? false;
+        }
 
         public void Dispose()
         {
