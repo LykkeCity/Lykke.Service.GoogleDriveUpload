@@ -263,7 +263,8 @@ namespace Lykke.Service.GoogleDriveUpload.Services
                 return result;
 
             var serviceEmailAddress = _settings.GoogleDriveApiKey.client_email.Trim().ToLower();
-            result.AddRange(allPermissions.Where(p => p.EmailAddress.Trim().ToLower() != serviceEmailAddress).Select(p => new FilePermission()
+            var ownerRole = Role.Owner.ToString().ToLower();
+            result.AddRange(allPermissions.Where(p => p.EmailAddress.Trim().ToLower() != serviceEmailAddress && p.Role != ownerRole).Select(p => new FilePermission()
             {
                 GoogleId = p.Id,
                 Domain = p.Domain,
