@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.development.json">
+    <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
