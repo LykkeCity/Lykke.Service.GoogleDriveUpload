@@ -5,13 +5,13 @@ namespace Lykke.Service.GoogleDriveUpload.Core
     public class AppSettings
     {
         public GoogleDriveUploadSettings GoogleDriveUploadService { get; set; }
+        public SlackNotificationsSettings SlackNotifications { get; set; }
     }
 
     public class GoogleDriveUploadSettings
     {
         public DbSettings Db { get; set; }
         public GoogleDriveApiKey GoogleDriveApiKey { get; set; }
-        public SlackNotificationsSettings SlackNotifications { get; set; }
     }
 
     public class DbSettings

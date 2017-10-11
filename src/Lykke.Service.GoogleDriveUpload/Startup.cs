@@ -105,8 +105,8 @@ namespace Lykke.Service.GoogleDriveUpload
             // Creating slack notification service, which logs own azure queue processing messages to aggregate log
             var slackService = services.UseSlackNotificationsSenderViaAzureQueue(new AzureQueueIntegration.AzureQueueSettings
             {
-                ConnectionString = settings.GoogleDriveUploadService.SlackNotifications.AzureQueue.ConnectionString,
-                QueueName = settings.GoogleDriveUploadService.SlackNotifications.AzureQueue.QueueName
+                ConnectionString = settings.SlackNotifications.AzureQueue.ConnectionString,
+                QueueName = settings.SlackNotifications.AzureQueue.QueueName
             }, aggregateLogger);
 
             var dbLogConnectionString = settings.GoogleDriveUploadService.Db.LogsConnString;
