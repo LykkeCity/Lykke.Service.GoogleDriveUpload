@@ -95,7 +95,7 @@ namespace Lykke.Service.GoogleDriveUpload.Controllers
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync("GoogleDriveController", nameof(UploadFile), string.Empty, ex);
+                await _log.WriteErrorAsync("GoogleDriveController", nameof(GetPermissions), string.Empty, ex);
                 return StatusCode(500, ErrorResponse.Create(ex.Message));
             }
         }
@@ -127,7 +127,7 @@ namespace Lykke.Service.GoogleDriveUpload.Controllers
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync("GoogleDriveController", nameof(UploadFile), string.Empty, ex);
+                await _log.WriteErrorAsync("GoogleDriveController", nameof(AddOrUpdatePermission), string.Empty, ex);
                 return StatusCode(500, ErrorResponse.Create(ex.Message));
             }
         }
@@ -154,7 +154,7 @@ namespace Lykke.Service.GoogleDriveUpload.Controllers
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync("GoogleDriveController", nameof(UploadFile), string.Empty, ex);
+                await _log.WriteErrorAsync("GoogleDriveController", nameof(RemovePermission), string.Empty, ex);
                 return StatusCode(500, ErrorResponse.Create(ex.Message));
             }
         }
