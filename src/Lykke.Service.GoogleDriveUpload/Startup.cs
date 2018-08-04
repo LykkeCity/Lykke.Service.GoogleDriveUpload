@@ -51,12 +51,10 @@ namespace Lykke.Service.GoogleDriveUpload
             });
 
             var builder = new ContainerBuilder();
-            var appSettings = Environment.IsDevelopment()
-                ? Configuration.Get<AppSettings>()
-                : HttpSettingsLoader.Load<AppSettings>(Configuration.GetValue<string>("SettingsUrl"));
+            var appSettings = Configuration.LoadSettings<AppSettings>();
             var log = CreateLogWithSlack(services, appSettings);
 
-            builder.RegisterModule(new ServiceModule(appSettings.GoogleDriveUploadService, log));
+            builder.RegisterModule(new ServiceModule(appSettings, log));
             builder.Populate(services);
             ApplicationContainer = builder.Build();
 
@@ -73,7 +71,10 @@ namespace Lykke.Service.GoogleDriveUpload
             app.UseLykkeMiddleware("GoogleDriveUpload", ex => new {Message = "Technical problem"});
 
             app.UseMvc();
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                c.PreSerializeFilters.Add((swagger, httpReq) => swagger.Host = httpReq.Host.Value);
+            });
             app.UseSwaggerUi();
             app.UseStaticFiles();
 
@@ -95,7 +96,7 @@ namespace Lykke.Service.GoogleDriveUpload
             ApplicationContainer.Dispose();
         }
 
-        private static ILog CreateLogWithSlack(IServiceCollection services, AppSettings settings)
+        private static ILog CreateLogWithSlack(IServiceCollection services, IReloadingManager<AppSettings> settings)
         {
             var consoleLogger = new LogToConsole();
             var aggregateLogger = new AggregateLogger();
@@ -105,20 +106,21 @@ namespace Lykke.Service.GoogleDriveUpload
             // Creating slack notification service, which logs own azure queue processing messages to aggregate log
             var slackService = services.UseSlackNotificationsSenderViaAzureQueue(new AzureQueueIntegration.AzureQueueSettings
             {
-                ConnectionString = settings.SlackNotifications.AzureQueue.ConnectionString,
-                QueueName = settings.SlackNotifications.AzureQueue.QueueName
+                ConnectionString = settings.CurrentValue.SlackNotifications.AzureQueue.ConnectionString,
+                QueueName = settings.CurrentValue.SlackNotifications.AzureQueue.QueueName
             }, aggregateLogger);
 
-            var dbLogConnectionString = settings.GoogleDriveUploadService.Db.LogsConnString;
+            var dbLogConnectionStringManager = settings.Nested(x => x.GoogleDriveUploadService.Db.LogsConnString);
+            var dbLogsConnectionString = dbLogConnectionStringManager.CurrentValue;
 
             // Creating azure storage logger, which logs own messages to concole log
-            if (!string.IsNullOrEmpty(dbLogConnectionString) && !(dbLogConnectionString.StartsWith("${") && dbLogConnectionString.EndsWith("}")))
+            if (!string.IsNullOrEmpty(dbLogsConnectionString) && !(dbLogsConnectionString.StartsWith("${") && dbLogsConnectionString.EndsWith("}")))
             {
                 const string appName = "Lykke.Service.GoogleDriveUpload";
 
                 var persistenceManager = new LykkeLogToAzureStoragePersistenceManager(
                     appName,
-                    AzureTableStorage<LogEntity>.Create(() => dbLogConnectionString, "GoogleDriveUploadLog", consoleLogger),
+                    AzureTableStorage<LogEntity>.Create(dbLogConnectionStringManager, "GoogleDriveUploadLog", consoleLogger),
                     consoleLogger);
 
                 var slackNotificationsManager = new LykkeLogToAzureSlackNotificationsManager(appName, slackService, consoleLogger);
