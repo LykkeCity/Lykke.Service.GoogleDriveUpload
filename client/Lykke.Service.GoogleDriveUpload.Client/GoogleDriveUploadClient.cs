@@ -4,6 +4,7 @@ using Common.Log;
 using Lykke.Service.GoogleDriveUpload.Client.AutorestClient;
 using System.Collections.Generic;
 using Lykke.Service.GoogleDriveUpload.Client.AutorestClient.Models;
+using Lykke.Common.Log;
 
 namespace Lykke.Service.GoogleDriveUpload.Client
 {
@@ -12,9 +13,22 @@ namespace Lykke.Service.GoogleDriveUpload.Client
         private readonly ILog _log;
         private GoogleDriveUploadAPI _service;
 
+        [Obsolete("Please, use the overload which consumes ILogFactory instead.")]
         public GoogleDriveUploadClient(string serviceUrl, ILog log)
         {
             _log = log;
+            _service = new GoogleDriveUploadAPI(new Uri(serviceUrl));
+        }
+
+        public GoogleDriveUploadClient(string serviceUrl, ILogFactory logFactory)
+        {
+            if (logFactory == null)
+                throw new ArgumentNullException(nameof(logFactory));
+            _log = logFactory.CreateLog(this);
+
+            if (string.IsNullOrWhiteSpace(serviceUrl))
+                throw new ArgumentNullException(nameof(serviceUrl));
+
             _service = new GoogleDriveUploadAPI(new Uri(serviceUrl));
         }
 
