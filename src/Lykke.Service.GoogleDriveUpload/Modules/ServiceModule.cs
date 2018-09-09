@@ -4,18 +4,19 @@ using Common.Log;
 using Lykke.Service.GoogleDriveUpload.Core;
 using Lykke.Service.GoogleDriveUpload.Core.Services;
 using Lykke.Service.GoogleDriveUpload.Services;
+using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.Service.GoogleDriveUpload.Modules
 {
     public class ServiceModule : Module
     {
-        private readonly GoogleDriveUploadSettings _settings;
+        private readonly IReloadingManager<AppSettings> _settings;
         private readonly ILog _log;
         // NOTE: you can remove it if you don't need to use IServiceCollection extensions to register service specific dependencies
         private readonly IServiceCollection _services;
 
-        public ServiceModule(GoogleDriveUploadSettings settings, ILog log)
+        public ServiceModule(IReloadingManager<AppSettings> settings, ILog log)
         {
             _settings = settings;
             _log = log;
@@ -25,7 +26,7 @@ namespace Lykke.Service.GoogleDriveUpload.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterInstance(_settings)
+            builder.RegisterInstance(_settings.CurrentValue.GoogleDriveUploadService)
                 .SingleInstance();
 
             builder.RegisterInstance(_log)
