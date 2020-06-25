@@ -5,7 +5,15 @@
     <AssemblyName>Lykke.Service.GoogleDriveUpload.Core</AssemblyName>
     <RootNamespace>Lykke.Service.GoogleDriveUpload.Core</RootNamespace>
     <Version>1.0.0</Version>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="1.1.95" />
